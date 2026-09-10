@@ -5,7 +5,7 @@ Repository containing lab tasks, experimental benchmarks, and semester projects 
 ## Repository Structure
 
 - `Lab_01/` - Transfer learning and classical classifier benchmarking on skin cancer datasets (ISIC)
-- `Semester_Project/` - Final year project source code, architecture diagrams, and documentation
+- `Semester_Project/` - Project source code, architecture diagrams, and documentation
 
 ## Technical Stack
 - **Programming Language**: Python
