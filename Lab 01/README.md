@@ -1,6 +1,6 @@
 # Lab 01: Skin Cancer Classification (ISIC Dataset)
 
-Benchmarking transfer learning models, deep feature extractors, and classical machine learning classifiers on the 9-class ISIC skin cancer dataset[cite: 4].
+Benchmarking transfer learning models, deep feature extractors, and classical machine learning classifiers on the 9-class ISIC skin cancer dataset.
 
 ## Experimental Results
 
