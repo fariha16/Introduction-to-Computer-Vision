@@ -15,14 +15,6 @@ Each model is loaded with ImageNet-pretrained weights; the convolutional
 backbone stays frozen and only the final classification layer is
 fine-tuned.
 
-## Folder layout
-```
-Lab 02/
-├── README.md                 # this file
-├── answers.md                 # write-up + filled-in results table
-└── ICV_BAI_032_LAB2.ipynb    # the experiment notebook
-```
-
 ## Requirements
 Google Colab is the easiest way to run this (free GPU, and `kagglehub`
 caches the dataset). To run locally instead:
