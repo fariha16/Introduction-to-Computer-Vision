@@ -68,5 +68,5 @@ Evaluation of spatial gradient masks across representative lesion morphology fro
 .
 ├── README.md                           # Main Repository Documentation
 ├── Report.md                           # Formal Academic Lab Report & Q/A
-├── main_pipeline.ipynb                 # Executable PyTorch & OpenCV Notebook
+├── CV_BAI_053_Lab_3.ipynb                 # Executable PyTorch & OpenCV Notebook
 └── Assets/                        
