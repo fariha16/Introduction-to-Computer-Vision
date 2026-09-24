@@ -1,6 +1,3 @@
----
-
-
 # Comprehensive Laboratory Report: Edge Extraction Dynamics and Image Representation Benchmarking
 
 ## 1. Introduction
