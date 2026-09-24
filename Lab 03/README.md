@@ -69,6 +69,4 @@ Evaluation of spatial gradient masks across representative lesion morphology fro
 ├── README.md                           # Main Repository Documentation
 ├── Report.md                           # Formal Academic Lab Report & Q/A
 ├── main_pipeline.ipynb                 # Executable PyTorch & OpenCV Notebook
-├── Task1_Edge_Detection_Comparison.png # Edge Detection Grid Plot
-├── Task2_Training_Validation_Curves.png# Performance Curves
-└── Task2_Confusion_Matrices.png       # Classification Metrics Plots
+└── Assets/                        
