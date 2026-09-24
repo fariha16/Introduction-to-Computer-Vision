@@ -55,10 +55,10 @@ Evaluation of spatial gradient masks across representative lesion morphology fro
 ### Visualization Artifacts
 
 #### Model Optimization & Learning Dynamics
-![Task 2 Training Validation Curves](Task2_Training_Validation_Curves.png)
+![Task 2 Training Validation Curves](Task2_Training_Validation_Curves.jpeg)
 
 #### Confusion Matrix Multi-Representation Comparison
-![Task 2 Confusion Matrices](Task2_Confusion_Matrices.png)
+![Task 2 Confusion Matrices](Task2_Confusion_Matrices.jpeg)
 
 ---
 
