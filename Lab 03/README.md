@@ -24,7 +24,7 @@ This repository hosts a comprehensive Computer Vision and Machine Learning bench
 ### Task 1: Boundary Extraction Comparison
 Evaluation of spatial gradient masks across representative lesion morphology from all target classes.
 
-![Task 1 Edge Detection Comparison](Task1_Edge_Detection_Comparison.png)
+![Task 1 Edge Detection Comparison](Task1_Edge_Detection_Comparison.jpeg)
 
 ---
 
