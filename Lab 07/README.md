@@ -144,7 +144,7 @@ Both models score much lower on test (about 84% macro-F1) than on validation (ab
 
 **Google Colab (recommended)**
 
-1. Open `ICV_BAI_032_LAB7.ipynb` in Colab (File → Upload notebook, or open it from GitHub).
+1. Open `ICV_BAI_053_LAB7.ipynb` in Colab (File → Upload notebook, or open it from GitHub).
 2. Keep the default CPU runtime.
 3. Runtime → Run all. The first cell installs `medmnist`; everything else is already in Colab.
 4. Download `results/` and `figures/` from the Colab file browser if you want to keep them.
@@ -164,7 +164,7 @@ jupyter notebook ICV_BAI_032_LAB7.ipynb
 
 ```
 Lab_07/
-├── ICV_BAI_032_LAB7.ipynb     # full experiment
+├── ICV_BAI_053_LAB7.ipynb     # full experiment
 ├── README.md
 ├── requirements.txt
 ├── .gitignore
