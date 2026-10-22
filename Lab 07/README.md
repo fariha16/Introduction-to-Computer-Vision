@@ -157,7 +157,7 @@ Later runs reuse the saved masks if `results/` is still there.
 
 ```bash
 pip install -r requirements.txt
-jupyter notebook ICV_BAI_032_LAB7.ipynb
+jupyter notebook ICV_BAI_053_LAB7.ipynb
 ```
 
 ## Repository structure
