@@ -1,0 +1,10 @@
+,HOG + SVM (Baseline),GA-HOG + SVM (GA-A),Improvement
+Accuracy (%),86.5385,86.2179,-0.3205
+"Precision (Macro, %)",90.1505,89.7267,-0.4238
+"Recall (Macro, %)",82.3932,82.0513,-0.3419
+Macro-F1 (%),84.3792,84.0072,-0.3719
+Weighted-F1 (%),85.8311,85.4938,-0.3374
+Balanced accuracy (%),82.3932,82.0513,-0.3419
+"Specificity (Macro, %)",82.3932,82.0513,-0.3419
+Cohen's kappa,0.6929,0.6856,-0.0073
+Matthews correlation coefficient,0.7213,0.7137,-0.0076

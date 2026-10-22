@@ -1,0 +1,3 @@
+model,n_features,pct_features,Accuracy (%),"Precision (Macro, %)","Recall (Macro, %)",Macro-F1 (%),Weighted-F1 (%),Balanced accuracy (%),"Specificity (Macro, %)",Cohen's kappa,Matthews correlation coefficient
+HOG + SVM,8100,100.0,86.5385,90.1505,82.3932,84.3792,85.8311,82.3932,82.3932,0.6929,0.7213
+GA-HOG + SVM (GA-A),3936,48.5926,86.2179,89.7267,82.0513,84.0072,85.4938,82.0513,82.0513,0.6856,0.7137

@@ -1,0 +1,13 @@
+Parameter,Baseline: HOG + SVM,Proposed: GA-HOG + SVM
+Medical dataset,PneumoniaMNIST,PneumoniaMNIST
+Image resolution,128 × 128,128 × 128
+HOG orientations,9,9
+Pixels per cell,8×8,8×8
+Cells per block,2×2,2×2
+Block normalization,L2-Hys,L2-Hys
+Feature selection,None,Genetic Algorithm (GA-A)
+Classifier,SVM,SVM
+SVM kernel,RBF,RBF
+Hyperparameter tuning,Validation set (C=1),Validation set (C=1)
+Data split,Official MedMNIST split,Official MedMNIST split
+Random seed,42,42
