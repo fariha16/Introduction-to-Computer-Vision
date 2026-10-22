@@ -1,311 +1,195 @@
-Lab 07: Improving HOG-Based Medical Image Classification Using a Genetic Algorithm
-1. Objective
+# Lab 07: Improving HOG-Based Medical Image Classification Using a Genetic Algorithm
 
-The objective of this experiment is to improve traditional Histogram of Oriented Gradients (HOG)-based medical image classification by integrating a Genetic Algorithm (GA) for feature selection.
+**Course:** Introduction to Computer Vision (ICV) · **Notebook:** `ICV_BAI_032_LAB7.ipynb` (runs in Google Colab, CPU runtime)
 
-The experiment compares two approaches:
+## Objective
 
-Baseline: HOG feature extraction + Support Vector Machine (SVM).
-Proposed: HOG feature extraction + Genetic Algorithm-based feature selection + SVM.
+Add a Genetic Algorithm (GA) for feature selection to the standard HOG + SVM pipeline, and test whether it improves classification of chest X-rays while using fewer features.
 
-The primary goal is to determine whether GA-based feature selection can improve classification performance while reducing feature dimensionality and computational cost during subsequent model training and inference.
+**Research question:** Can GA-based feature selection improve the classification performance of HOG features while reducing feature dimensionality on medical images?
 
-2. Dataset
+The hypothesis is tested, not assumed. If the GA does not help, the notebook reports that.
 
-Dataset: BloodMNIST
+## Method in brief
 
-BloodMNIST is a medical image dataset containing blood-cell images from eight classes.
+**HOG (Histogram of Oriented Gradients).** The image is divided into 8×8-pixel cells. Each cell gets a 9-bin histogram of gradient directions, weighted by gradient strength. Neighbouring cells are grouped into 2×2 blocks and normalised (L2-Hys) so the descriptor is less sensitive to brightness and contrast. For a 128×128 image this gives 15 × 15 blocks × 4 cells × 9 bins = **8100 features**.
 
-Number of images: 17,092
-Number of classes: 8
-Image resolution: 128 × 128
-Image format: RGB
-Dataset Splits
+**GA feature selection.** Each chromosome is a binary mask of length 8100: gene *i* = 1 means HOG feature *i* is kept. The GA evolves a population of masks:
 
-The experiment uses the official BloodMNIST splits.
+| Step | Choice |
+|---|---|
+| Initial population | Each gene set to 1 with probability 0.5 |
+| Fitness | `validation macro-F1 − 0.05 × (fraction of features kept)` |
+| Fitness classifier | RBF-SVM (C from the baseline), trained on a fixed stratified subset of 600 training images and scored on the full validation set |
+| Selection | Tournament, size 3 |
+| Crossover | Uniform, probability 0.8 |
+| Mutation | Bit-flip with probability `p_m` per gene |
+| Elitism | Best 2 masks copied to the next generation |
+| Stopping | 12 generations, or 4 generations without improvement |
 
-Split	Number of Images
-Training	11,959
-Validation	1,712
-Testing	3,421
-Total	17,092
-Dataset References
-Official website: https://medmnist.com/
-GitHub repository: https://github.com/MedMNIST/MedMNIST
-Research paper: https://doi.org/10.1038/s41597-022-01721-8
-3. Methodology
+Macro-F1 is used because the dataset is imbalanced. The small penalty term favours smaller masks when two masks score about the same.
 
-The experiment consists of the following stages:
+Two GA settings are compared (only the mutation probability changes):
 
-Load the BloodMNIST dataset.
-Preprocess images and resize them to 128 × 128.
-Convert RGB images to grayscale.
-Extract HOG features.
-Train the baseline HOG + SVM classifier.
-Apply a Genetic Algorithm to select an informative subset of HOG features.
-Train an SVM classifier using the selected features.
-Evaluate both approaches using the same held-out test set.
-Compare classification performance, feature dimensionality, and computational time.
-4. Experimental Configuration
-Parameter	Baseline HOG + SVM	GA-HOG + SVM
-Dataset	BloodMNIST	BloodMNIST
-Image resolution	128 × 128	128 × 128
-Preprocessing	RGB to grayscale	RGB to grayscale
-HOG orientations	9	9
-Pixels per cell	8 × 8	8 × 8
-Cells per block	2 × 2	2 × 2
-Block normalization	L2-Hys	L2-Hys
-Feature selection	None	Genetic Algorithm
-Classifier	SVM	SVM
-SVM kernel	RBF	RBF
-SVM C	10	10
-Random seed	42	42
-Data splits	Official fixed splits	Same official fixed splits
+| Setting | Population | Mutation probability |
+|---|---|---|
+| GA-A | 12 | 0.01 |
+| GA-B | 12 | 0.05 |
 
-The selected HOG configuration produces 8,100 features per image.
+## Dataset
 
-5. Genetic Algorithm
+**PneumoniaMNIST** (MedMNIST v2 / MedMNIST+, 128×128 version). Grayscale paediatric chest X-rays from Kermany et al. (2018), labelled `0 = normal` and `1 = pneumonia`. Licence: CC BY 4.0.
 
-The Genetic Algorithm searches for a feature subset that achieves high validation macro-F1 while penalizing unnecessarily large feature subsets.
+| Split | Images | Normal | Pneumonia |
+|---|---|---|---|
+| Train | 4708 | 1214 | 3494 |
+| Validation | 524 | 135 | 389 |
+| Test | 624 | 234 | 390 |
 
-Chromosome Representation
+(The notebook prints these counts when it loads the data.)
 
-Each chromosome is a binary vector of length 8,100.
+The notebook downloads the dataset automatically with the `medmnist` package into `data/` (about 80 MB). If the download fails, get `pneumoniamnist_128.npz` from [Zenodo](https://zenodo.org/records/10519652) and upload it to `data/` in Colab.
 
-1: Select the corresponding HOG feature.
-0: Discard the corresponding HOG feature.
-GA Operations
-Population initialization: Generate random binary feature masks.
-Fitness evaluation: Train an RBF SVM using each candidate feature subset and calculate validation macro-F1.
-Selection: Use tournament selection to choose parent chromosomes.
-Crossover: Apply uniform crossover to generate offspring.
-Mutation: Randomly flip binary genes according to the mutation probability.
-Elitism: Preserve the best chromosome across generations.
-Fitness Function
+The dataset is **not** stored in this repository (`data/` is in `.gitignore`).
 
-The fitness function combines classification performance and a feature-selection penalty:
+## Experimental protocol
 
-𝐹
-(
-𝑚
-)
-=
-𝐹
-1
-,
-m
-a
-c
-r
-o
-(
-𝑚
-)
-−
-𝜆
-∑
-𝑗
-=
-1
-𝑑
-𝑚
-𝑗
-𝑑
+- **Fixed split:** the official MedMNIST train/validation/test split, the same for every model.
+- **Fixed seed:** `SEED = 42` for NumPy, the GA and the fitness subset.
+- **Preprocessing:** grayscale, 128×128, scaled to [0, 1]. A `StandardScaler` is fitted on the training set only.
+- **Classifier:** the same for both models: RBF-SVM, `gamma='scale'`, `class_weight='balanced'`. C is chosen from {1, 10, 100} by validation macro-F1.
+- **No test leakage:** GA fitness, choosing the best chromosome, choosing between GA-A and GA-B (higher validation macro-F1, fewer features if tied), and tuning C all use the training and validation sets only. The test set is used once, in the final evaluation.
+- **Caching:** the best mask from each GA run is saved in `results/`. With `RERUN_GA = False`, re-running the notebook reuses the saved masks.
 
-Where:
+| Parameter | Baseline: HOG + SVM | Proposed: GA-HOG + SVM |
+|---|---|---|
+| Medical dataset | PneumoniaMNIST | PneumoniaMNIST |
+| Image resolution | 128 × 128 | 128 × 128 |
+| HOG orientations | 9 | 9 |
+| Pixels per cell | 8×8 | 8×8 |
+| Cells per block | 2×2 | 2×2 |
+| Block normalization | L2-Hys | L2-Hys |
+| Feature selection | None | Genetic Algorithm |
+| Classifier / kernel | SVM / RBF | SVM / RBF |
+| Hyperparameter tuning | Validation set | Validation set |
+| Data split | Identical fixed split | Identical fixed split |
+| Random seed | 42 | 42 |
 
-𝐹
-1
-,
-m
-a
-c
-r
-o
- is validation macro-F1.
-𝑚
- is the binary feature-selection mask.
-𝑑
- is the total number of HOG features.
-𝜆
-=
-0.05
- is the feature penalty coefficient.
+## Evaluation metrics
 
-A higher fitness indicates a better balance between classification performance and feature reduction.
+Accuracy, macro precision, macro recall, macro-F1, weighted-F1, balanced accuracy, macro specificity (one-vs-rest TN / (TN + FP) per class, then averaged), Cohen's kappa, Matthews correlation coefficient and confusion matrices. The notebook also reports the number and percentage of features kept, and timings for HOG extraction, GA search, SVM training and inference.
 
-GA Configurations
-Parameter	GA Configuration 1	GA Configuration 2
-Population size	10	10
-Generations	6	6
-Mutation probability	0.001	0.01
-Crossover	Uniform	Uniform
-Selection	Tournament	Tournament
-Elitism	Enabled	Enabled
-Feature penalty	0.05	0.05
+## Results
 
-The mutation probability is the only GA parameter changed between the two configurations.
+All numbers below come from one full run of the notebook on a free Colab CPU (seed 42). The tables are saved in `results/` and the plots in `figures/`.
 
-6. Evaluation Metrics
+### Validation (used for every decision)
 
-Both models are evaluated using the following metrics:
+| Model | Features kept | Validation macro-F1 | Chosen C |
+|---|---|---|---|
+| HOG + SVM (baseline) | 8100 (100%) | 0.9553 | 1 |
+| GA-A (p_m = 0.01, ran 12 generations) | 3936 (48.6%) | **0.9605** | 1 |
+| GA-B (p_m = 0.05, stopped early at generation 9) | 4011 (49.5%) | 0.9520 | 10 |
 
-Accuracy: Proportion of correctly classified images.
-Macro precision: Average precision across all classes.
-Macro recall: Average recall across all classes.
-Macro-F1: Unweighted average of the class-wise F1 scores.
-Weighted-F1: Average F1 weighted by class support.
-Balanced accuracy: Average class-wise recall.
-Macro specificity: Average one-vs-rest specificity across classes.
-Cohen's kappa: Agreement between predicted and true labels adjusted for chance.
-Matthews correlation coefficient (MCC): Overall classification quality accounting for true and false predictions.
+On validation, GA-A scored highest, so it was chosen as the proposed model before the test set was used.
 
-The test set is reserved for final evaluation and is not used to select GA configurations.
+### Test set (Table 2, `results/table2_test_comparison.csv`)
 
-7. Experimental Results
+| Metric | HOG + SVM (Baseline) | GA-HOG + SVM (GA-A) | Improvement |
+|---|---|---|---|
+| Accuracy (%) | 86.54 | 86.22 | −0.32 |
+| Precision (Macro, %) | 90.15 | 89.73 | −0.42 |
+| Recall (Macro, %) | 82.39 | 82.05 | −0.34 |
+| Macro-F1 (%) | 84.38 | 84.01 | −0.37 |
+| Weighted-F1 (%) | 85.83 | 85.49 | −0.34 |
+| Balanced accuracy (%) | 82.39 | 82.05 | −0.34 |
+| Specificity (Macro, %) | 82.39 | 82.05 | −0.34 |
+| Cohen's kappa | 0.69 | 0.69 | −0.01 |
+| Matthews correlation coefficient | 0.72 | 0.71 | −0.01 |
 
-Note: The following tables must be populated using the actual output of the experiment. No numerical performance results are assumed in advance.
+For reference only (not used for any decision): GA-B reached 81.01% test macro-F1 and 84.13% accuracy.
 
-Table 1. Classification Performance Comparison
-Metric	HOG + SVM	GA-HOG + SVM (0.001)	GA-HOG + SVM (0.01)
-Accuracy (%)	TBD	TBD	TBD
-Macro precision (%)	TBD	TBD	TBD
-Macro recall (%)	TBD	TBD	TBD
-Macro-F1 (%)	TBD	TBD	TBD
-Weighted-F1 (%)	TBD	TBD	TBD
-Balanced accuracy (%)	TBD	TBD	TBD
-Macro specificity (%)	TBD	TBD	TBD
-Cohen's kappa	TBD	TBD	TBD
-Matthews correlation coefficient	TBD	TBD	TBD
-Table 2. Feature Selection Comparison
-Measurement	Baseline	GA Configuration 1	GA Configuration 2
-Original features	8,100	8,100	8,100
-Selected features	8,100	TBD	TBD
-Features removed	0	TBD	TBD
-Feature reduction (%)	0	TBD	TBD
+**Confusion matrices (test).** The baseline gets 154/234 normal and 386/390 pneumonia right. GA-A gets 153/234 and 385/390. The two models differ by only two test images (one per class). Both models make the same kind of mistake: about a third of normal X-rays (80–81 of 234) are predicted as pneumonia.
 
-Feature reduction is calculated as:
+![Confusion matrices](figures/04_confusion_matrices.png)
 
-Reduction
-(
-%
-)
-=
-(
-1
-−
-𝑑
-s
-e
-l
-e
-c
-t
-e
-d
-𝑑
-o
-r
-i
-g
-i
-n
-a
-l
-)
-×
-100
-Table 3. Computational Cost
-Measurement	HOG + SVM	GA Configuration 1	GA Configuration 2
-HOG extraction time (seconds)	TBD	TBD	TBD
-GA search time (seconds)	N/A	TBD	TBD
-Final SVM fitting and evaluation time (seconds)	TBD	TBD	TBD
-Total pipeline time (seconds)	TBD	TBD	TBD
+### Feature reduction and computational cost (`results/computational_cost.csv`)
 
-The GA search time should be reported separately because it is an additional cost compared with the baseline. Total pipeline time should include feature extraction, GA search where applicable, and final model fitting and evaluation.
+| | HOG + SVM | GA-HOG + SVM (GA-A) |
+|---|---|---|
+| Features | 8100 | 3936 (48.6%) |
+| HOG extraction, all 5856 images (shared) | 49.1 s | 49.1 s |
+| GA search | — | 244 s (4.1 min) |
+| C tuning (3 SVM fits) | 179.6 s | 85.8 s |
+| SVM training, chosen C | 50.6 s | 24.7 s |
+| Test inference (624 images) | 9.9 s | 5.2 s |
 
-8. Graphical Results
+![GA fitness](figures/03_ga_fitness.png)
 
-The experiment generates the following plots in the lab07_results/ directory.
+![Metrics and feature counts](figures/05_metrics_and_features.png)
 
-Figure 1. GA Fitness Across Generations
+### Conclusion
 
-File: ga_fitness.png
+On this dataset, GA feature selection **did not improve classification**. GA-HOG + SVM kept 48.6% of the HOG features and scored 0.3–0.4 percentage points lower than the baseline on every test metric. That is a difference of two images out of 624, which is within what one split and one seed can show as noise. The two models perform about the same.
 
-This graph compares the best fitness values across generations for both mutation probabilities. An increasing fitness curve indicates that the algorithm is discovering better feature subsets.
+The GA did deliver a **dimensionality reduction with about the same accuracy**. With half the features, the final SVM trained about 2× faster (50.6 s → 24.7 s) and predicted about 2× faster (9.9 s → 5.2 s). The price is a one-time GA search of about 4 minutes.
 
-Figure 2. Feature Dimensionality Before and After Selection
+On validation, GA-A looked better than the baseline (0.9605 vs 0.9553 macro-F1), but this did not carry over to the test set. This is the expected effect of selecting features on the same validation set used to score them. It shows why the test set had to stay untouched until the end.
 
-File: feature_counts.png
+Mutation probability mattered. GA-A (0.01) kept improving and removing features until the last generation. GA-B (0.05) found one good mask early, then made no progress and stopped at generation 9. Its mask was worse on validation and on test.
 
-This graph compares the original 8,100 HOG features with the number of features selected by each GA configuration. A smaller feature subset indicates successful dimensionality reduction.
+Both models score much lower on test (about 84% macro-F1) than on validation (about 95%). The test set has a different class balance (234 : 390 vs 135 : 389), and most errors are normal X-rays predicted as pneumonia. This gap comes from the dataset and the HOG features themselves, not from the GA.
 
-Figure 3. Test Macro-F1 Comparison
+## How to run
 
-File: test_macro_f1.png
+**Google Colab (recommended)**
 
-This graph compares the final test macro-F1 scores of the baseline and the two GA configurations. Higher macro-F1 indicates better average classification performance across the eight classes.
+1. Open `ICV_BAI_032_LAB7.ipynb` in Colab (File → Upload notebook, or open it from GitHub).
+2. Keep the default CPU runtime.
+3. Runtime → Run all. The first cell installs `medmnist`; everything else is already in Colab.
+4. Download `results/` and `figures/` from the Colab file browser if you want to keep them.
 
-9. Discussion
-Strengths
-GA-based selection can remove irrelevant or redundant HOG features.
-Macro-F1-based fitness encourages performance across all classes.
-The experiment compares two mutation probabilities under the same data-split and classifier settings.
-A smaller feature subset can reduce storage requirements and potentially lower SVM prediction costs.
-Limitations
-Repeated SVM training makes GA-based feature selection computationally expensive.
-Random initialization and mutation can lead to different feature subsets across runs.
-Repeated optimization against the same validation set may cause validation overfitting.
-Excessive feature penalties may remove useful information.
-BloodMNIST is a benchmark dataset; strong benchmark performance does not establish clinical diagnostic reliability.
-Computational Cost
+Measured on a free Colab CPU: download about 1 min, HOG about 1 min, baseline tuning about 3 min, the two GA runs about 7 min, GA-model tuning about 4 min. The whole notebook takes roughly 20 minutes.
 
-The baseline requires HOG extraction and one final SVM fit. The proposed approach additionally evaluates many candidate feature subsets during GA optimization.
+Later runs reuse the saved masks if `results/` is still there.
 
-Although feature selection may reduce the cost of the final classifier, the overall pipeline may still be slower because of the search process. Both the feature reduction and the total runtime must therefore be considered when evaluating the proposed method.
+**Locally**
 
-10. Conclusion
+```bash
+pip install -r requirements.txt
+jupyter notebook ICV_BAI_032_LAB7.ipynb
+```
 
-This experiment investigates whether Genetic Algorithm-based feature selection can improve HOG-based blood-cell image classification while reducing feature dimensionality.
+## Repository structure
 
-The final conclusion should be based on the measured results:
+```
+Lab_07/
+├── ICV_BAI_032_LAB7.ipynb     # full experiment
+├── README.md
+├── requirements.txt
+├── .gitignore
+├── results/                   # created by the notebook: CSV tables, GA masks and histories
+└── figures/                   # created by the notebook: plots
+```
 
-Baseline test macro-F1: [insert result]
-Best GA test macro-F1: [insert result]
-Macro-F1 improvement: [insert percentage-point difference]
-Best GA feature count: [insert result]
-Feature reduction: [insert percentage]
-Additional GA search time: [insert result]
+## Limitations
 
-If the GA model achieves higher macro-F1 and balanced accuracy while selecting fewer features, the results support its effectiveness under the tested configuration. If performance decreases, the GA may still provide dimensionality reduction, but the classification trade-off must be acknowledged. If results are similar, the additional search cost may not be justified.
+- **Optimistic validation score.** GA fitness and the choice of the best mask use the same validation set, so the GA model's validation score is optimistic. Only the test results are a fair comparison.
+- **Fitness on a subset.** To keep Colab runtime reasonable, fitness uses an SVM trained on 600 of the 4708 training images, so the chosen mask may not be the best one for the full training set.
+- **Small search.** A population of 12 and up to 12 generations explores only a small part of the 2^8100 possible masks. The initial masks keep about half of the features, so the final mask also keeps a large fraction.
+- **One split, one seed.** There are no confidence intervals, so differences of about one percentage point may be noise.
+- **No patient IDs.** MedMNIST does not include patient identifiers, so patient-level separation between splits cannot be verified. The experiment relies on the official split.
+- **Low resolution.** 128×128 images lose fine detail compared with the original X-rays.
 
-The research question can be answered only after examining the actual test results and computational measurements.
+## Reproducibility
 
-11. How to Run
-Install Dependencies
-pip install medmnist scikit-image scikit-learn numpy pandas matplotlib seaborn
+- Seed 42 everywhere; the official fixed split; HOG and GA settings defined in one place near the top of the notebook.
+- The scaler and all model decisions use only train and validation data.
+- Saved GA masks (`results/GA-*_best_mask.npy`) let the final models be rebuilt without re-running the GA.
 
-Execute the Experiment
-python lab07_ga_hog.py
+## References
 
-
-The dataset is downloaded automatically if it is not already available.
-
-Generated Files
-
-The script saves its results in the lab07_results/ directory:
-
-lab07_results/
-├── experimental_configuration.csv
-├── metrics_comparison.csv
-├── ga_fitness.csv
-├── ga_fitness.png
-├── feature_counts.png
-└── test_macro_f1.png
-
-12. References
-Yang, J. et al. MedMNIST v2: A large-scale lightweight benchmark for 2D and 3D biomedical image classification. Scientific Data, 2023. https://doi.org/10.1038/s41597-022-01721-8
-MedMNIST official website: https://medmnist.com/
-MedMNIST GitHub repository: https://github.com/MedMNIST/MedMNIST
-scikit-image HOG documentation: https://scikit-image.org/docs/stable/api/skimage.feature.html#skimage.feature.hog
-scikit-learn SVM documentation: https://scikit-learn.org/stable/modules/svm.html
+- Dalal, N., & Triggs, B. (2005). Histograms of Oriented Gradients for Human Detection. *CVPR*.
+- Yang, J., et al. (2023). MedMNIST v2: A large-scale lightweight benchmark for 2D and 3D biomedical image classification. *Scientific Data*, 10, 41.
+- Kermany, D. S., et al. (2018). Identifying Medical Diagnoses and Treatable Diseases by Image-Based Deep Learning. *Cell*, 172(5), 1122–1131.
+- Holland, J. H. (1975). *Adaptation in Natural and Artificial Systems*. University of Michigan Press.
