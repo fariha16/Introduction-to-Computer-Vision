@@ -1,6 +1,6 @@
 # Lab 07: Improving HOG-Based Medical Image Classification Using a Genetic Algorithm
 
-**Course:** Introduction to Computer Vision (ICV) · **Notebook:** `ICV_BAI_032_LAB7.ipynb` (runs in Google Colab, CPU runtime)
+**Course:** Introduction to Computer Vision (ICV) · **Notebook:** `ICV_BAI_053_LAB7.ipynb` (runs in Google Colab, CPU runtime)
 
 ## Objective
 
