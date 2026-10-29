@@ -1,4 +1,4 @@
- Lab Mid: HOG vs SIFT on Blood-Cell Images
+Lab Mid: HOG vs SIFT on Blood-Cell Images
 
 **Name:** Fariha  
 **Reg No:** 053  
