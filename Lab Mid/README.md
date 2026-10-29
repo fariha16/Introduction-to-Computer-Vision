@@ -1,4 +1,4 @@
-Lab Mid: HOG vs SIFT on Blood-Cell Images
+# Lab Mid: HOG vs SIFT on Blood-Cell Images
 
 **Name:** Fariha  
 **Reg No:** 053  
@@ -43,24 +43,6 @@ A small lab wants a simple blood-cell classifier that runs on a normal laptop. T
 | Rotation test | 20 degrees |
 | Noise test | Gaussian noise, σ = 0.05 (image scaled to 0–1) |
 
----
-
-## Pipeline
-```
-BloodMNIST (RGB 64×64)
-      │
-      ▼
-Keep 4 classes → sample 100/30/30 per class (seed 53)
-      │
-      ▼
-Grayscale → Resize to 128×128
-      │
-      ├──► HOG features (1764) ──► StandardScaler ──► LinearSVC
-      │
-      └──► Grid SIFT features (2048) ──► StandardScaler ──► LinearSVC
-                                                │
-                                                ▼
-                        Evaluate on Clean / Rotated / Noisy test images
 ```
 
 ---
