@@ -175,17 +175,6 @@ If the test set is used to pick C, the test set has influenced the model, so the
 
 ### (c) Which two classes were confused most?
 
-Errors between each pair of classes on the validation set (both directions counted, from the confusion matrices above):
-
-| class pair | HOG errors | SIFT errors | total errors |
-|---|---|---|---|
-| **eosinophil – monocyte** | 16 | 17 | **33** |
-| eosinophil – neutrophil | 11 | 9 | 20 |
-| neutrophil – platelet | 1 | 3 | 4 |
-| monocyte – neutrophil | 3 | 0 | 3 |
-| monocyte – platelet | 1 | 0 | 1 |
-| eosinophil – platelet | 0 | 0 | 0 |
-
 The two classes confused most were **eosinophil and monocyte** (33 errors in total: 16 for HOG and 17 for SIFT). Eosinophil is the hardest class (recall on validation: HOG 17/30 = 56.7 %, SIFT 18/30 = 60.0 %), while platelet is almost never confused.
 
 **Why grayscale makes this harder:** eosinophils and monocytes are both large, round white blood cells with a big nucleus, so their outline and size look similar. They differ mostly in **colour**: eosinophils have bright red-orange granules, while monocytes have a smooth grey-blue cytoplasm. Grayscale removes this colour cue, so the models only see shape and texture, which look much more alike.
