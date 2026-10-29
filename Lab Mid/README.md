@@ -10,8 +10,8 @@ Build two classical blood-cell classifiers, **HOG + SVM** and **SIFT + SVM**, th
 ## Files
 | File | Description |
 |---|---|
-| `CV_BAI_053_LabMid.ipynb` | Executed notebook with all outputs (Q1–Q5) |
-| `CV_BAI_053_LabMid.pdf` | PDF copy of the notebook |
+| `FA23_BAI_053_Fariha_LabMid.ipynb` | Executed notebook with all outputs (Q1–Q5) |
+| `FA23_BAI_053_Fariha_LabMid.pdf` | PDF copy of the notebook |
 
 ## Personal settings (from reg no 053)
 | Setting | Rule | Value |
@@ -58,10 +58,6 @@ Average 72.6 keypoints per image (min 4, max 213), with 0 images having zero key
 - **Rotation (20°):** neither model lost accuracy. HOG rose from 0.658 to 0.733, but with only 120 test images (one image = 0.8%), this is most likely random variation rather than rotation genuinely helping.
 - **Most confused classes:** eosinophil and monocyte for both models. These two cells differ mainly in colour (red-orange granules vs grey-blue cytoplasm), which is lost after converting to grayscale.
 
-## How to run
-1. Open the notebook in Google Colab.
-2. Runtime → Run all. The first cell installs `medmnist`, and the dataset downloads automatically.
-3. To use another registration number, change `REG_NO` in the first cell.
 
 ## Libraries
 `medmnist`, `numpy`, `opencv-python` (`cv2`), `scikit-image`, `scikit-learn`, `matplotlib`
