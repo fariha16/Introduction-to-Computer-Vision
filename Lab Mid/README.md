@@ -43,9 +43,7 @@ A small lab wants a simple blood-cell classifier that runs on a normal laptop. T
 | Rotation test | 20 degrees |
 | Noise test | Gaussian noise, σ = 0.05 (image scaled to 0–1) |
 
-```
 
----
 
 ## Q1. Data Setup
 - Loaded BloodMNIST at size 64 and kept only classes 1, 5, 6 and 7.
