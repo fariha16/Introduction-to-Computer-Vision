@@ -40,12 +40,6 @@ HOG settings: 9 orientations, **16 × 16** pixels per cell, 2 × 2 cells per blo
 
 **Feature length printed by the code: 1764**
 
-**Hand calculation:**
-1. Cells per side = 128 / 16 = **8**, so 8 × 8 = 64 cells.
-2. Blocks slide one cell at a time: blocks per side = 8 − 2 + 1 = **7**, so 7 × 7 = **49 blocks**.
-3. Each block has 2 × 2 = 4 cells, and each cell has 9 bins, so 4 × 9 = **36 numbers per block**.
-4. Feature length = 49 × 36 = **1764**, which matches the printed length.
-
 ### (b) HOG picture for one image per class
 
 Top row: original image. Bottom row: HOG picture (eosinophil, monocyte, neutrophil, platelet).
@@ -64,14 +58,6 @@ All three values of C gave the same validation accuracy, so the first one with t
 
 **Chosen C = 0.1. Validation accuracy = 73.3 %, validation macro-F1 = 73.2 %.**
 
-Confusion matrix (validation set, rows = true class):
-
-| | pred eosinophil | pred monocyte | pred neutrophil | pred platelet |
-|---|---|---|---|---|
-| **true eosinophil** | 17 | 8 | 5 | 0 |
-| **true monocyte** | 8 | 21 | 0 | 1 |
-| **true neutrophil** | 6 | 3 | 20 | 1 |
-| **true platelet** | 0 | 0 | 0 | 30 |
 
 ![HOG confusion matrix](images/cell13_1.png)
 
@@ -102,11 +88,6 @@ An SVM needs every image to be one vector of the same fixed length, but normal S
 Keypoints are placed on a regular 4 × 4 grid over the 128 × 128 image (centres at 16, 48, 80, 112 in x and y), keypoint size 32. The descriptor is computed at every grid point with `sift.compute` and the 16 descriptors are joined into one vector, so every image has the same feature length.
 
 **Feature length printed by the code: 2048** (16 grid points printed)
-
-**Hand calculation:**
-1. Grid points = 4 × 4 = **16 keypoints**.
-2. Each SIFT descriptor has **128** numbers (4 × 4 spatial cells × 8 orientation bins).
-3. Feature length = 16 × 128 = **2048**, which matches the printed length.
 
 ### (c) LinearSVC — C chosen on the validation set
 
