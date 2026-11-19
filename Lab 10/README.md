@@ -70,18 +70,6 @@ House value depends on income and location in a non-linear way, with interaction
 | XGBoost | Most accurate, regularised, fast | Many hyperparameters |
 | KNN | Simple, no training phase | Needs scaling; slow predictions on large data; sensitive to k |
 
-## How to run
-
-**Google Colab (easiest):** click the **Open in Colab** badge above, then choose *Runtime → Run all*. It takes about 2 minutes.
-
-**Locally:**
-
-```bash
-git clone https://github.com/alisherahmad/ml-regression-comparison.git
-cd ml-regression-comparison
-pip install -r requirements.txt
-jupyter notebook Regression_Comparison.ipynb
-```
 
 ## Repository structure
 
@@ -93,7 +81,4 @@ ml-regression-comparison/
 └── README.md
 ```
 
-## Author
-
-Ali Sher Ahmad, BS Artificial Intelligence, COMSATS University Islamabad, Wah Campus
 
