@@ -1,7 +1,5 @@
 # Comparative Implementation of Machine Learning Regression Algorithms
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/alisherahmad/ml-regression-comparison/blob/main/Regression_Comparison.ipynb)
-
 Six regression algorithms are trained on the same house-price prediction problem and compared fairly:
 **Linear Regression, Decision Tree, Random Forest, Neural Network (MLP), XGBoost and K-Nearest Neighbors.**
 
