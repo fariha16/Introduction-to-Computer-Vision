@@ -1,0 +1,5 @@
+Setting,Val accuracy (ep 20),Feature-map correlation,Filter-weight cosine sim,Dead filters / 5
+Healthy (He init),0.9900000095367432,0.7134085029363633,0.3017904918640852,0
+Cause 1: constant (symmetric) init,0.11500000208616257,1.0,0.9999998927116394,0
+Cause 2: dead ReLU (bias −5),0.09000000357627869,1.0,0.002720627776579931,5
+Fix 2: LeakyReLU + same bias −5,0.9775000214576721,0.1633786976337433,0.04181347191333771,0
