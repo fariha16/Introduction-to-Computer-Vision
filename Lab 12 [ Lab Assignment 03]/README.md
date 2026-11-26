@@ -45,12 +45,17 @@ By default the notebook draws a **synthetic 256×256 building facade**: sky grad
 | B: 5×5, Avg pool | (5·5·3+1)·5 = 380 | (5·5·5+1)·10 = 1260 | (10+1)·10 = 110 | **1750** |
 
 **Short versions of the viva answers**
+
 - **Q1:** ReLU blacks out the **top and left edges of every window** (and the left wall, the underside of the cornice and the sky gradient), because those are bright→dark transitions where the kernel gives about −1.8. Leaky ReLU keeps them at −0.18 (faint lines). Sigmoid maps everything into (0, 1), with flat areas at 0.5.
+  
 - **Q2:** Max pooling keeps 1–2 px edge lines at full strength; average pooling halves them (about 51 % of the peak). For dark text on white, max pooling erases the strokes (0 % after two pools). **Average** pooling is better of the two, and min pooling or inverting the image is best.
+  
 - **Q3:** **+146.48 %** total (+173.33 % conv-only). **2** stacked 3×3 layers equal one 5×5 receptive field, saving **7C² − C (≈ 28 %)**. Applied to Model B this gives 1750 → 1024 (**−726, 41.5 %**).
+  
 - **Q4:** **Identical**, because ReLU is monotonic, so max(ReLU(x)) = ReLU(max(x)). Pooling first means 4× fewer ReLU evaluations. This does **not** hold for average pooling.
+  
 - **Q5:** (1) **Symmetric/constant init** gives identical gradients and filters that stay identical forever. Fix: He-normal init. (2) **Dead ReLUs** from a high learning rate or negative bias give all-zero maps. Fix: Leaky ReLU, a lower learning rate, BatchNorm, zero bias init.
 
 ---
-the values to quote.
+
 
